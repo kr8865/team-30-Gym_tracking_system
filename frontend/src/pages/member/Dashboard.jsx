@@ -7,7 +7,7 @@ import {
   StrengthProgressChart,
   WeeklyVolumeChart,
   AttendanceHeatmap,
-} from './ProgressCharts';
+} from "../../components/member/ProgressCharts";
 
 const MemberDashboard = () => {
   const { currentUser } = useAuth();
