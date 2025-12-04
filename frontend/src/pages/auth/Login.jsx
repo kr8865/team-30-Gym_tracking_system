@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Mail, Lock, ArrowRight } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
@@ -41,13 +42,24 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center p-4">
-      {/* Background animation */}
-      <div className="absolute inset-0 overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-6">
+      {/* Animated background blobs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
-          className="absolute w-96 h-96 bg-white rounded-full mix-blend-multiply filter blur-3xl opacity-20"
-          animate={{ x: [0, 100, 0], y: [0, 100, 0] }}
+          className="absolute top-20 right-20 w-96 h-96 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
+          animate={{
+            x: [0, 50, 0],
+            y: [0, 30, 0],
+          }}
           transition={{ duration: 8, repeat: Infinity }}
+        />
+        <motion.div
+          className="absolute bottom-20 left-20 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
+          animate={{
+            x: [0, -50, 0],
+            y: [0, -30, 0],
+          }}
+          transition={{ duration: 10, repeat: Infinity }}
         />
       </div>
 
@@ -60,17 +72,17 @@ const Login = () => {
         {/* Card */}
         <motion.div
           variants={itemVariants}
-          className="bg-white bg-opacity-95 backdrop-blur-lg rounded-3xl shadow-2xl p-8 border border-white border-opacity-20"
+          className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-10 border border-white/20"
         >
           {/* Header */}
-          <motion.div variants={itemVariants} className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-r from-indigo-600 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <span className="text-3xl">💪</span>
+          <motion.div variants={itemVariants} className="text-center mb-10">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl mb-6 shadow-xl">
+              <span className="text-4xl">💪</span>
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-pink-500 bg-clip-text text-transparent">
-              FitTrack
+            <h1 className="text-4xl font-black text-gray-900 mb-3">
+              Welcome Back
             </h1>
-            <p className="text-gray-600 mt-2">Welcome back, fitness champion!</p>
+            <p className="text-gray-600 text-lg">Sign in to continue your fitness journey</p>
           </motion.div>
 
           {/* Form */}
@@ -78,7 +90,7 @@ const Login = () => {
             {error && (
               <motion.div
                 variants={itemVariants}
-                className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg"
+                className="bg-red-50 border-2 border-red-200 text-red-700 px-5 py-4 rounded-xl text-sm font-medium"
               >
                 {error}
               </motion.div>
@@ -86,17 +98,17 @@ const Login = () => {
 
             {/* Email */}
             <motion.div variants={itemVariants}>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Email
+              <label className="block text-sm font-bold text-gray-700 mb-3">
+                Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-3 text-gray-400" size={20} />
+                <Mail className="absolute left-4 top-4 text-gray-400" size={20} />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition text-gray-900 placeholder-gray-400 text-lg"
                   required
                 />
               </div>
@@ -104,19 +116,26 @@ const Login = () => {
 
             {/* Password */}
             <motion.div variants={itemVariants}>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-gray-700 mb-3">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 text-gray-400" size={20} />
+                <Lock className="absolute left-4 top-4 text-gray-400" size={20} />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full pl-12 pr-12 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition text-gray-900 placeholder-gray-400 text-lg"
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
               </div>
             </motion.div>
 
@@ -127,40 +146,37 @@ const Login = () => {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-indigo-600 to-pink-500 text-white py-3 rounded-lg font-bold hover:shadow-lg transition flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-2xl hover:shadow-indigo-500/50 transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Logging in...' : (
+              {loading ? (
+                'Signing in...'
+              ) : (
                 <>
-                  Login <ArrowRight size={20} />
+                  Sign In <ArrowRight size={20} />
                 </>
               )}
             </motion.button>
           </form>
 
-          {/* Divider */}
-          <motion.div variants={itemVariants} className="my-6 flex items-center">
-            <div className="flex-1 h-px bg-gray-300"></div>
-            <span className="px-3 text-gray-500 text-sm">Or continue with</span>
-            <div className="flex-1 h-px bg-gray-300"></div>
-          </motion.div>
-
           {/* Signup Link */}
-          <motion.p variants={itemVariants} className="text-center text-gray-600">
+          <motion.p variants={itemVariants} className="text-center text-gray-600 mt-8 text-lg">
             Don't have an account?{' '}
-            <a href="/signup" className="text-indigo-600 font-bold hover:underline">
+            <Link to="/signup" className="text-indigo-600 font-bold hover:text-indigo-700 transition">
               Sign up
-            </a>
+            </Link>
           </motion.p>
         </motion.div>
 
         {/* Demo Credentials */}
         <motion.div
           variants={itemVariants}
-          className="mt-6 bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-4 border border-white border-opacity-20"
+          className="mt-6 bg-white/60 backdrop-blur-lg rounded-2xl p-6 border border-white/40"
         >
-          <p className="text-white text-sm font-semibold mb-2">Demo Credentials:</p>
-          <p className="text-white text-xs">Email: demo@fittrack.com</p>
-          <p className="text-white text-xs">Password: demo123456</p>
+          <p className="text-gray-700 font-bold mb-3 text-center">Demo Credentials</p>
+          <div className="space-y-2 text-sm text-gray-600">
+            <p><span className="font-semibold">Email:</span> demo@fittrack.com</p>
+            <p><span className="font-semibold">Password:</span> demo123456</p>
+          </div>
         </motion.div>
       </motion.div>
     </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, Dumbbell, TrendingUp, QrCode, Book, Users } from 'lucide-react';
+import { Calendar, Dumbbell, TrendingUp, QrCode, Book, Users, Activity, Award, Flame } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import {
   WeightProgressChart,
@@ -67,39 +67,43 @@ const MemberDashboard = () => {
   };
 
   const stats = [
-    { icon: TrendingUp, label: 'Weight Lost', value: '5 kg', color: 'from-blue-500 to-blue-600' },
-    { icon: Dumbbell, label: 'Bench Max', value: '98 kg', color: 'from-red-500 to-red-600' },
-    { icon: Calendar, label: 'Streak', value: '12 days', color: 'from-green-500 to-green-600' },
-    { icon: Book, label: 'Workouts', value: '45 logged', color: 'from-purple-500 to-purple-600' },
+    { icon: TrendingUp, label: 'Weight Lost', value: '5.2', unit: 'kg', color: 'from-blue-500 to-blue-600', bgColor: 'bg-blue-50' },
+    { icon: Dumbbell, label: 'Bench Max', value: '98', unit: 'kg', color: 'from-red-500 to-red-600', bgColor: 'bg-red-50' },
+    { icon: Calendar, label: 'Streak', value: '12', unit: 'days', color: 'from-green-500 to-green-600', bgColor: 'bg-green-50' },
+    { icon: Flame, label: 'Calories', value: '45K', unit: 'kcal', color: 'from-orange-500 to-orange-600', bgColor: 'bg-orange-50' },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Hero Section */}
+      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h1 className="text-5xl sm:text-6xl font-black text-white mb-4">
+              Welcome Back, {currentUser?.email?.split('@')[0]}! 💪
+            </h1>
+            <p className="text-xl text-white/90">
+              Your fitness dashboard - track every step of your journey
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Main Content */}
       <motion.section
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="max-w-7xl mx-auto"
+        className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12"
       >
-        {/* Header */}
-        <motion.div variants={itemVariants} className="mb-12">
-          <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 rounded-3xl p-8 text-white shadow-xl">
-            <h1 className="text-4xl sm:text-5xl font-black mb-2">
-              Welcome Back, {currentUser?.email?.split('@')[0]}! 💪
-            </h1>
-            <p className="text-lg text-gray-100">
-              Your fitness dashboard - track every step of your journey
-            </p>
-          </div>
-        </motion.div>
-
         {/* Stats Grid */}
         <motion.div
           variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16"
         >
           {stats.map((stat, idx) => {
             const Icon = stat.icon;
@@ -107,12 +111,19 @@ const MemberDashboard = () => {
               <motion.div
                 key={idx}
                 variants={itemVariants}
-                whileHover={{ translateY: -5 }}
-                className={`bg-gradient-to-br ${stat.color} rounded-2xl p-6 text-white shadow-xl`}
+                whileHover={{ translateY: -8, scale: 1.02 }}
+                className={`${stat.bgColor} rounded-3xl p-8 shadow-xl border-2 border-white transition-all duration-300`}
               >
-                <Icon className="mb-4" size={32} />
-                <p className="text-sm opacity-90 mb-2">{stat.label}</p>
-                <p className="text-3xl font-black">{stat.value}</p>
+                <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${stat.color} mb-6 shadow-lg`}>
+                  <Icon className="text-white" size={32} />
+                </div>
+                <p className="text-sm font-bold text-gray-600 uppercase tracking-wide mb-2">
+                  {stat.label}
+                </p>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-5xl font-black text-gray-900">{stat.value}</p>
+                  <p className="text-xl font-bold text-gray-500">{stat.unit}</p>
+                </div>
               </motion.div>
             );
           })}
@@ -120,52 +131,61 @@ const MemberDashboard = () => {
 
         {/* Quick Actions */}
         <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
+          variants={itemVariants}
+          className="mb-16"
         >
-          {[
-            { icon: QrCode, title: 'Check-In', desc: 'Scan QR at gym' },
-            { icon: Dumbbell, title: 'Log Workout', desc: 'Record your session' },
-            { icon: Users, title: 'Book Trainer', desc: 'Schedule session' },
-          ].map((action, idx) => {
-            const Icon = action.icon;
-            return (
-              <motion.button
-                key={idx}
-                variants={itemVariants}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition cursor-pointer"
-              >
-                <Icon className="text-indigo-600 mx-auto mb-4" size={40} />
-                <h3 className="font-bold text-lg mb-1">{action.title}</h3>
-                <p className="text-sm text-gray-600">{action.desc}</p>
-              </motion.button>
-            );
-          })}
+          <h2 className="text-3xl font-black text-gray-900 mb-8">Quick Actions</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { icon: QrCode, title: 'Check-In', desc: 'Scan QR at gym entrance', gradient: 'from-indigo-500 to-purple-500' },
+              { icon: Dumbbell, title: 'Log Workout', desc: 'Record your training session', gradient: 'from-purple-500 to-pink-500' },
+              { icon: Users, title: 'Book Trainer', desc: 'Schedule a personal session', gradient: 'from-pink-500 to-red-500' },
+            ].map((action, idx) => {
+              const Icon = action.icon;
+              return (
+                <motion.button
+                  key={idx}
+                  variants={itemVariants}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-white hover:border-gray-100 group"
+                >
+                  <div className={`inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br ${action.gradient} mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                    <Icon className="text-white" size={40} />
+                  </div>
+                  <h3 className="font-black text-2xl mb-3 text-gray-900">{action.title}</h3>
+                  <p className="text-gray-600 text-lg">{action.desc}</p>
+                </motion.button>
+              );
+            })}
+          </div>
         </motion.div>
 
         {/* Tab Navigation */}
-        <motion.div variants={itemVariants} className="flex gap-4 mb-8 overflow-x-auto">
-          {[
-            { id: 'overview', label: 'Overview' },
-            { id: 'progress', label: 'Progress Charts' },
-            { id: 'workouts', label: 'My Workouts' },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-6 py-3 rounded-lg font-semibold whitespace-nowrap transition ${
-                activeTab === tab.id
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        <motion.div variants={itemVariants} className="mb-12">
+          <div className="flex gap-4 overflow-x-auto pb-2">
+            {[
+              { id: 'overview', label: 'Overview', icon: Activity },
+              { id: 'progress', label: 'Progress Charts', icon: TrendingUp },
+              { id: 'workouts', label: 'My Workouts', icon: Book },
+            ].map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-lg whitespace-nowrap transition-all duration-300 ${
+                    activeTab === tab.id
+                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-xl shadow-indigo-500/50 scale-105'
+                      : 'bg-white text-gray-700 hover:bg-gray-50 shadow-lg'
+                  }`}
+                >
+                  <Icon size={20} />
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
         </motion.div>
 
         {/* Content Area */}
@@ -176,20 +196,29 @@ const MemberDashboard = () => {
             animate="visible"
             className="space-y-8"
           >
-            <motion.div variants={itemVariants} className="bg-white rounded-2xl shadow-lg p-8">
-              <h2 className="text-2xl font-bold mb-4">Your Progress Summary</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <motion.div variants={itemVariants} className="bg-white rounded-3xl shadow-xl p-10 border-2 border-white">
+              <h2 className="text-3xl font-black mb-8 text-gray-900">Your Progress Summary</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {[
-                  { label: 'Total Calories Burned', value: '45,320 kcal', change: '+12%' },
-                  { label: 'Average Session Duration', value: '58 min', change: '+8%' },
-                  { label: 'Personal Records', value: '8 broken', change: 'New!' },
-                ].map((item, idx) => (
-                  <div key={idx} className="border-l-4 border-indigo-600 pl-4">
-                    <p className="text-gray-600 text-sm mb-1">{item.label}</p>
-                    <p className="text-2xl font-bold text-gray-900">{item.value}</p>
-                    <p className="text-sm text-green-600 font-semibold mt-1">{item.change}</p>
-                  </div>
-                ))}
+                  { label: 'Total Calories Burned', value: '45,320', unit: 'kcal', change: '+12%', icon: Flame },
+                  { label: 'Average Session Duration', value: '58', unit: 'min', change: '+8%', icon: Activity },
+                  { label: 'Personal Records', value: '8', unit: 'broken', change: 'New!', icon: Award },
+                ].map((item, idx) => {
+                  const Icon = item.icon;
+                  return (
+                    <div key={idx} className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 border-l-4 border-indigo-600">
+                      <Icon className="text-indigo-600 mb-4" size={32} />
+                      <p className="text-gray-600 text-sm font-bold uppercase tracking-wide mb-2">{item.label}</p>
+                      <div className="flex items-baseline gap-2 mb-2">
+                        <p className="text-4xl font-black text-gray-900">{item.value}</p>
+                        <p className="text-lg font-bold text-gray-500">{item.unit}</p>
+                      </div>
+                      <p className="text-sm text-green-600 font-bold bg-green-50 inline-block px-3 py-1 rounded-full">
+                        {item.change}
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
             </motion.div>
           </motion.div>
@@ -200,7 +229,7 @@ const MemberDashboard = () => {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="space-y-8"
+            className="space-y-10"
           >
             <WeightProgressChart data={weightData} />
             <StrengthProgressChart data={strengthData} />
@@ -214,28 +243,42 @@ const MemberDashboard = () => {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="bg-white rounded-2xl shadow-lg p-8"
+            className="bg-white rounded-3xl shadow-xl p-10 border-2 border-white"
           >
-            <h2 className="text-2xl font-bold mb-6">Recent Workouts</h2>
-            <div className="space-y-4">
+            <h2 className="text-3xl font-black mb-8 text-gray-900">Recent Workouts</h2>
+            <div className="space-y-6">
               {[
-                { date: 'Today', exercise: 'Chest & Triceps', duration: '1h 15m', calories: '450 kcal' },
-                { date: 'Yesterday', exercise: 'Back & Biceps', duration: '1h 10m', calories: '420 kcal' },
-                { date: '2 days ago', exercise: 'Legs', duration: '1h 30m', calories: '580 kcal' },
+                { date: 'Today', exercise: 'Chest & Triceps', duration: '1h 15m', calories: '450', sets: '24' },
+                { date: 'Yesterday', exercise: 'Back & Biceps', duration: '1h 10m', calories: '420', sets: '22' },
+                { date: '2 days ago', exercise: 'Legs', duration: '1h 30m', calories: '580', sets: '28' },
+                { date: '3 days ago', exercise: 'Shoulders & Abs', duration: '55m', calories: '380', sets: '20' },
               ].map((workout, idx) => (
                 <motion.div
                   key={idx}
                   variants={itemVariants}
-                  className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition"
+                  whileHover={{ scale: 1.02 }}
+                  className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 border-2 border-transparent hover:border-indigo-200"
                 >
                   <div className="flex justify-between items-start">
-                    <div>
-                      <p className="text-gray-600 text-sm">{workout.date}</p>
-                      <h3 className="text-lg font-bold">{workout.exercise}</h3>
-                      <p className="text-gray-600">{workout.duration}</p>
+                    <div className="flex-1">
+                      <p className="text-gray-600 text-sm font-bold uppercase tracking-wide mb-2">{workout.date}</p>
+                      <h3 className="text-2xl font-black text-gray-900 mb-3">{workout.exercise}</h3>
+                      <div className="flex gap-6">
+                        <div>
+                          <p className="text-gray-600 text-sm font-semibold">Duration</p>
+                          <p className="text-lg font-bold text-gray-900">{workout.duration}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-600 text-sm font-semibold">Sets</p>
+                          <p className="text-lg font-bold text-gray-900">{workout.sets}</p>
+                        </div>
+                      </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-xl font-bold text-indigo-600">{workout.calories}</p>
+                      <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl px-6 py-4 shadow-lg">
+                        <p className="text-white text-sm font-bold uppercase tracking-wide mb-1">Calories</p>
+                        <p className="text-3xl font-black text-white">{workout.calories}</p>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
